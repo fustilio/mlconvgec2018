@@ -5,13 +5,8 @@ unzip $COMMIT.zip
 rm $COMMIT.zip
 mv fairseq-py-$COMMIT fairseq-py
 
-COMMIT=b9453d5a211fc8f90fb25a584b39d4784f8de716
-echo "Downloading n-best reranker from https://github.com/nusnlp/nbest-reranker (rev: $COMMIT)"
-wget https://github.com/nusnlp/nbest-reranker/archive/$COMMIT.zip
-unzip $COMMIT.zip
-rm $COMMIT.zip
-mv nbest-reranker-$COMMIT nbest-reranker
-#git clone https://github.com/nusnlp/nbest-reranker/
+echo "Downloading n-best reranker from https://github.com/fustilio/nbest-reranker (rev: master)"
+git clone https://github.com/fustilio/nbest-reranker.git nbestreranker
 
 COMMIT=ec5c7b009c409e72b5ef65a77c1a846546f14847
 echo "Downloading Subword NMT from https://github.com/rsennrich/subword-nmt (rev: $COMMIT)"
