@@ -31,7 +31,7 @@ fi
 
 
 FAIRSEQPY=$SOFTWARE_DIR/fairseq-py
-NBEST_RERANKER=$SOFTWARE_DIR/nbest-reranker
+NBEST_RERANKER=$SOFTWARE_DIR/nbestreranker
 
 
 beam=12
@@ -39,7 +39,7 @@ nbest=$beam
 threads=12
 
 mkdir -p $output_dir
-python2.7 $SCRIPTS_DIR/apply_bpe.py -c $MODEL_DIR/bpe_model/train.bpe.model < $input_file > $output_dir/input.bpe.txt
+python3.6 $SCRIPTS_DIR/apply_bpe.py -c $MODEL_DIR/bpe_model/train.bpe.model < $input_file > $output_dir/input.bpe.txt
 
 # running fairseq on the test data
 CUDA_VISIBLE_DEVICES=$device python3.6 $FAIRSEQPY/interactive.py --no-progress-bar --path $models --beam $beam --nbest $beam  $MODEL_DIR/data_bin --source-lang src --target-lang trg  < $output_dir/input.bpe.txt > $output_dir/output.bpe.nbest.txt
@@ -57,8 +57,8 @@ if [ $# -eq 6  ];  then
     elif [ $reranker_feats == "eolm" ]; then
         featstring="EditOps(name='EditOps0'), LM('LM0', '$MODEL_DIR/lm/94Bcclm.trie', normalize=False), WordPenalty(name='WordPenalty0')"
     fi
-    python2.7 $SCRIPTS_DIR/nbest_reformat.py -i $output_dir/output.bpe.nbest.txt --debpe > $output_dir/output.tok.nbest.reformat.txt
-    python2.7 $NBEST_RERANKER/augmenter.py -s $input_file -i $output_dir/output.tok.nbest.reformat.txt -o $output_dir/output.tok.nbest.reformat.augmented.txt -f "$featstring"
-    python2.7 $NBEST_RERANKER/rerank.py -i $output_dir/output.tok.nbest.reformat.augmented.txt -w $reranker_weights -o $output_dir --clean-up
+    python3.6 $SCRIPTS_DIR/nbest_reformat.py -i $output_dir/output.bpe.nbest.txt --debpe > $output_dir/output.tok.nbest.reformat.txt
+    python3.6 $NBEST_RERANKER/augmenter.py -s $input_file -i $output_dir/output.tok.nbest.reformat.txt -o $output_dir/output.tok.nbest.reformat.augmented.txt -f "$featstring"
+    python3.6 $NBEST_RERANKER/rerank.py -i $output_dir/output.tok.nbest.reformat.augmented.txt -w $reranker_weights -o $output_dir --clean-up
     mv $output_dir/output.tok.nbest.reformat.augmented.txt.reranked.1best $output_dir/output.reranked.tok.txt
 fi
