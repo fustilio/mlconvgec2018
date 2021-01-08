@@ -35,26 +35,26 @@ def extract_corrections(file):
         if x == len(corrections)-1 : empty = True
       if empty : continue
       for x in range(0,len(corrections)):
-	lang, prob = langid.classify(sentences[x])
+        lang, prob = langid.classify(sentences[x])
         if lang!='en' : continue
         if len(corrections[x])>0 :
           corrections[x] = corrections[x][1:-1]
         if corrections[x] == '':
-          print journal_id+'\t'+author_id+'\t'+language+'\t'+sentences[x]+'\t'+sentences[x]
+          print(journal_id+'\t'+author_id+'\t'+language+'\t'+sentences[x]+'\t'+sentences[x])
         else:
           for corr in re.split('","',corrections[x]) :
             lang, prob = langid.classify(corr)
             if lang!='en' : continue
             if len(corr.split(" ,.")) - len(sentences[x].split(" ,.")) > 5 : continue
             else :
-              print journal_id+'\t'+author_id+'\t'+language+'\t'+sentences[x]+'\t'+corr
+              print(journal_id+'\t'+author_id+'\t'+language+'\t'+sentences[x]+'\t'+corr)
 
 def main():
   """Read Base64 encoded string and output decoded string"""
   import sys
 
   if len(sys.argv) < 2:
-    print >>sys.stderr, "Usage: %s file1 file2 ..." % (sys.argv[0])
+    print("Usage: %s file1 file2 ..." % (sys.argv[0]), file=sys.stderr)
     sys.exit(-1)
   for file in sys.argv[1:]:
     extract_corrections(file)

@@ -36,7 +36,7 @@ def write_to_m2(wlines, fwrite):
 
 
 def get_chunks(l, n):
-   	nlines = len(l)/n
+	nlines = int(len(l)/n)
 	chunks = [l[i:i + nlines] for i in range(0, len(l)-len(l)%nlines, nlines)]
 	rem = len(l)%nlines
 	if rem > 0:
@@ -48,25 +48,31 @@ def split_lines(filename, outprefix, numparts, shuffle=False):
 	# Read from input m2 file
 	dataset_lines = read_from_m2(filename)
 
-	if args.shuffle == True:
+	if shuffle is True:
 		random.shuffle(dataset_lines)
 
 	data_chunks = get_chunks(dataset_lines, numparts)
 
+	file_names = []
 	fwrites = []
-	for i in xrange(numparts):
-		fwrites.append(open(outprefix+"."+str(i+1)+".m2",'w'))
-	for i in xrange(numparts):
+    
+	for i in range(numparts):
+		file_name = outprefix+"."+str(i+1)+".m2"
+		fwrites.append(open(file_name,'w'))
+		file_names.append(file_name)
+	for i in range(numparts):
 		for lines in data_chunks[i]:
 			write_to_m2(lines, fwrites[i])
 		fwrites[i].close()
+    
+	return file_names
 
 def get_lines(filename, outprefix, numlines,  shuffle=False):
 
 	# Read from input m2 file
 	dataset_lines = read_from_m2(filename)
 
-	if args.shuffle == True:
+	if shuffle is True:
 		random.shuffle(dataset_lines)
 
 	# Writing the num. of lines to the m2 file
@@ -89,17 +95,18 @@ def get_lines(filename, outprefix, numlines,  shuffle=False):
 			write_to_m2(lines, fwrite)
 		fwrite.close()
 
-parser = argparse.ArgumentParser()
-parser.add_argument('-i','--input_m2', dest="input_m2", required=True, help="Path to input m2 file")
-parser.add_argument('-o','--output_m2_prefix', dest="output_m2_prefix", required=True, help="Path to output m2 file")
-parser.add_argument('-s','--shuffle', dest="shuffle", action='store_true', help="Shuffle the m2 file before splitting")
-group = parser.add_mutually_exclusive_group(required=True)
-group.add_argument('-l','--num_lines', type=int, dest="num_lines", help="Number of lines to extract")
-group.add_argument('-n','--num_parts', type=int, dest="num_parts", help="Number of parts to split m2 file into")
-args = parser.parse_args()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i','--input_m2', dest="input_m2", required=True, help="Path to input m2 file")
+    parser.add_argument('-o','--output_m2_prefix', dest="output_m2_prefix", required=True, help="Path to output m2 file")
+    parser.add_argument('-s','--shuffle', dest="shuffle", action='store_true', help="Shuffle the m2 file before splitting")
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('-l','--num_lines', type=int, dest="num_lines", help="Number of lines to extract")
+    group.add_argument('-n','--num_parts', type=int, dest="num_parts", help="Number of parts to split m2 file into")
+    args = parser.parse_args()
 
-if args.num_lines:
-	get_lines(args.input_m2, args.output_m2_prefix, args.num_lines, args.shuffle)
-elif args.num_parts:
-	split_lines(args.input_m2, args.output_m2_prefix, args.num_parts, args.shuffle)
+    if args.num_lines:
+        get_lines(args.input_m2, args.output_m2_prefix, args.num_lines, args.shuffle)
+    elif args.num_parts:
+        split_lines(args.input_m2, args.output_m2_prefix, args.num_parts, args.shuffle)
 

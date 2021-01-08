@@ -32,7 +32,7 @@ def collect_lines(filename, outfilename, min_annots=0, out_remaining=False):
 
 	for lines in dataset_lines:
 		if len(lines) == 0:
-			print line
+			print(line)
 	sortedset = sorted(dataset_lines, key=lambda x: (len(x), -len(x[0].split())))
 	for lines in sortedset:
 		if len(lines) - 1 >= min_annots :	# len(lines) = sentence + annots
@@ -42,15 +42,16 @@ def collect_lines(filename, outfilename, min_annots=0, out_remaining=False):
 	fwrite.close()
 	fremwrite.close()
 
-parser = argparse.ArgumentParser()
-parser.add_argument('-i','--input_m2', dest="input_m2", required=True, help="Path to input m2 file")
-parser.add_argument('-o','--output_m2', dest="output_m2", required=True, help="Path to output m2 file")
-parser.add_argument('-m','--min_annots', type=int, dest="min_annots", help="Keep only lines with >= min. no. of annotations")
-parser.add_argument('--output-remaining-lines', action='store_true', dest="out_remaining", help="Output remaiining lines")
-args = parser.parse_args()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i','--input_m2', dest="input_m2", required=True, help="Path to input m2 file")
+    parser.add_argument('-o','--output_m2', dest="output_m2", required=True, help="Path to output m2 file")
+    parser.add_argument('-m','--min_annots', type=int, dest="min_annots", help="Keep only lines with >= min. no. of annotations")
+    parser.add_argument('--output-remaining-lines', action='store_true', dest="out_remaining", help="Output remaiining lines")
+    args = parser.parse_args()
 
-#filename = sys.argv[1]
-#outfilename = sys.argv[2]
-collect_lines(args.input_m2, args.output_m2, args.min_annots,args.out_remaining)
+    #filename = sys.argv[1]
+    #outfilename = sys.argv[2]
+    collect_lines(args.input_m2, args.output_m2, args.min_annots,args.out_remaining)
 
 
